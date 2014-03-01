@@ -18,7 +18,7 @@ Installation
 
 Usage
 =====
-example of 5sec interval task
+5sec interval task execution
 
 .. code-block:: python
 
@@ -33,8 +33,21 @@ example of 5sec interval task
     bot = MyBot()
     bot.start()
 
+crontab like task execution
+
+.. code-block:: python
+
+    class MyBot(okonomi.Bot):
+
+        @okonomi.crontab('*/5 * * * *')
+        def echo_pong(self):
+            print("pong")
+
 
 Okonomi?
 ========
-Okonomi is Japanese Soul Food!
-Okonomi-yaki is official name.
+Okonomi is Soul Food in Osaka City!
+Okonomiyaki_ is official name.
+
+.. _Okonomiyaki: http://en.wikipedia.org/wiki/Okonomiyaki
+
