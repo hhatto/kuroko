@@ -1,7 +1,19 @@
 import time
-from multiprocessing import Process
+from multiprocessing import Process, Queue
 import logbook
 from crontab import CronTab
+from watchdog.observers import Observer
+from watchdog.events import PatternMatchingEventHandler
+
+
+class _ProxyEventHandler(PatternMatchingEventHandler):
+
+    def _set_queue(self, queue):
+        self.passing_queue = queue
+
+    def on_any_event(self, event):
+        """passing all event to callback function"""
+        self.passing_queue.put(event)
 
 
 class Bot(object):
@@ -50,12 +62,29 @@ class Bot(object):
     def exe_watch(self, options):
         callback = options['callback']
         path = options['path']
+        ev = _ProxyEventHandler(options['patterns'], options['ignore_patterns'],
+                                options['ignore_directories'], options['case_sensitive'])
+        passing_queue = Queue()
+        ev._set_queue(passing_queue)
+        observer = Observer()
+        observer.schedule(ev, path, options['recursive'])
+        observer.start()
+        try:
+            while True:
+                event = passing_queue.get()
+                callback(self, event)
+        except:
+            observer.stop()
 
     @classmethod
-    def watch(self, path='.'):
+    def watch(self, path='.', patterns=['*'], ignore_patterns=None, ignore_directories=None, recursive=False, case_sensitive=False):
         def _watch(func):
             self.funcs.append({'function': 'exe_watch',
-                               'options': {'path': path, 'callback': func}})
+                               'options': {'path': path, 'callback': func, 'patterns': patterns,
+                                           'ignore_patterns': ignore_patterns,
+                                           'ignore_directories': ignore_directories,
+                                           'recursive': recursive,
+                                           'case_sensitive': case_sensitive}})
         return _watch
 
     def start(self):
@@ -80,3 +109,4 @@ class Bot(object):
 
 timer = Bot.timer
 crontab = Bot.crontab
+watch = Bot.watch
