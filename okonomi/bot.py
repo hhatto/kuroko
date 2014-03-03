@@ -11,7 +11,7 @@ class Bot(object):
     funcs = []
 
     def __init__(self, daemonize=False, debug=False):
-        self.daemonize = daemonize
+        self.daemonize = daemonize  # TODO: not implementation
         self.procs = []
         logging_level = logbook.INFO if not debug else logbook.DEBUG
         self.log = logbook.Logger('okonomi', logging_level)
@@ -29,7 +29,8 @@ class Bot(object):
     @classmethod
     def timer(self, interval=1):
         def _timer(func):
-            self.funcs.append({'function': 'exe_timer', 'options': {'interval': interval, 'callback': func}})
+            self.funcs.append({'function': 'exe_timer',
+                               'options': {'interval': interval, 'callback': func}})
         return _timer
 
     def exe_crontab(self, options):
@@ -42,8 +43,20 @@ class Bot(object):
     @classmethod
     def crontab(self, schedule='* * * * *'):
         def _timer(func):
-            self.funcs.append({'function': 'exe_crontab', 'options': {'schedule': schedule, 'callback': func}})
+            self.funcs.append({'function': 'exe_crontab',
+                               'options': {'schedule': schedule, 'callback': func}})
         return _timer
+
+    def exe_watch(self, options):
+        callback = options['callback']
+        path = options['path']
+
+    @classmethod
+    def watch(self, path='.'):
+        def _watch(func):
+            self.funcs.append({'function': 'exe_watch',
+                               'options': {'path': path, 'callback': func}})
+        return _watch
 
     def start(self):
         self.log.debug("start bot...")
