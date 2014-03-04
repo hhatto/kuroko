@@ -25,7 +25,7 @@ setup(
         'Programming Language :: Python :: 3',
     ],
     keywords="bot framework",
-    install_requires=('logbook', 'crontab'),
+    install_requires=('logbook', 'crontab', 'watchdog'),
     packages=['okonomi'],
     zip_safe=False,
 )

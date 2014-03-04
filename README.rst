@@ -43,6 +43,23 @@ crontab like task execution
         def echo_pong(self):
             print("pong")
 
+watchdog_ thin wrapper
+
+.. code-block:: python
+
+    class MyBot(okonomi.Bot):
+
+        @okonomi.watch
+        def echo_pong(self, event):
+            print("pong", event)
+
+        @okonomi.watch(patterns=['*.py'])
+        def echo_ping(self, event):
+            print("ping", event)
+
+
+.. _watchdog: https://pypi.python.org/pypi/watchdog
+
 
 Okonomi?
 ========

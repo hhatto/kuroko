@@ -1,4 +1,5 @@
 import time
+import functools
 from multiprocessing import Process, Queue
 import logbook
 from crontab import CronTab
@@ -77,15 +78,28 @@ class Bot(object):
             observer.stop()
 
     @classmethod
-    def watch(self, path='.', patterns=['*'], ignore_patterns=None, ignore_directories=None, recursive=False, case_sensitive=False):
-        def _watch(func):
-            self.funcs.append({'function': 'exe_watch',
-                               'options': {'path': path, 'callback': func, 'patterns': patterns,
-                                           'ignore_patterns': ignore_patterns,
-                                           'ignore_directories': ignore_directories,
-                                           'recursive': recursive,
-                                           'case_sensitive': case_sensitive}})
-        return _watch
+    def watch(self, obj=None, *args, **kwargs):
+        if callable(obj):
+            func = obj
+            @functools.wraps(obj)
+            def _watch():
+                self.funcs.append({'function': 'exe_watch',
+                                   'options': {'path': '.', 'callback': func, 'patterns': ['*'],
+                                               'ignore_patterns': None, 'ignore_directories': None,
+                                               'recursive': False, 'case_sensitive': False}})
+            return _watch()
+        else:
+            _args = [obj] + list(args)
+            def _watch(func):
+                def _inner_watch(self, path='.', patterns=['*'], ignore_patterns=None, ignore_directories=None, recursive=True, case_sensitive=False):
+                    self.funcs.append({'function': 'exe_watch',
+                                       'options': {'path': path, 'callback': func, 'patterns': patterns,
+                                                   'ignore_patterns': ignore_patterns,
+                                                   'ignore_directories': ignore_directories,
+                                                   'recursive': recursive,
+                                                   'case_sensitive': case_sensitive}})
+                return _inner_watch(self, *_args, **kwargs)
+            return _watch
 
     def start(self):
         self.log.debug("start bot...")
