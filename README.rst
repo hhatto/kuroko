@@ -6,7 +6,13 @@ Minimalistic Python Bot Framework
 Requirements
 ============
 - Python2.7+
-- Logbook
+- Logbook_
+- crontab_
+- watchdog_
+
+.. _Logbook: https://pypi.python.org/pypi/Logbook
+.. _crontab: https://pypi.python.org/pypi/crontab
+
 
 Installation
 ============
