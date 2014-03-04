@@ -5,11 +5,12 @@ try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
-import okonomi
+
+exec(open('okonomi/_version.py').read())
 
 setup(
     name='okonomi',
-    version=okonomi.__version__,
+    version=__version__,
     description="Minimalistic Python Bot Framework",
     long_description=open("README.rst").read(),
     license='MIT License',
