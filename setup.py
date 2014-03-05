@@ -6,17 +6,17 @@ try:
 except ImportError:
     from distutils.core import setup
 
-exec(open('okonomi/_version.py').read())
+exec(open('kuroko/_version.py').read())
 
 setup(
-    name='okonomi',
+    name='kuroko',
     version=__version__,
     description="Minimalistic Python Bot Framework",
     long_description=open("README.rst").read(),
     license='MIT License',
     author='Hideo Hattori',
     author_email='hhatto.jp@gmail.com',
-    url='https://github.com/hhatto/okonomi',
+    url='https://github.com/hhatto/kuroko',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
@@ -27,6 +27,6 @@ setup(
     ],
     keywords="bot framework",
     install_requires=('logbook', 'crontab', 'watchdog'),
-    packages=['okonomi'],
+    packages=['kuroko'],
     zip_safe=False,
 )

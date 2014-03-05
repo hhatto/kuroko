@@ -1,9 +1,9 @@
-import okonomi
+from kuroko import Bot, crontab
 
 
-class MyBot(okonomi.Bot):
+class MyBot(Bot):
 
-    @okonomi.crontab('*/2 * * * *')
+    @crontab('*/2 * * * *')
     def echo_pong(self):
         print("pong")
 

@@ -1,9 +1,9 @@
-import okonomi
+from kuroko import Bot, watch
 
 
-class MyBot(okonomi.Bot):
+class MyBot(Bot):
 
-    @okonomi.watch
+    @watch
     def echo_pong(self, event):
         print(event, "change [%s]" % event.src_path)
 

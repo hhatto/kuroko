@@ -1,11 +1,11 @@
 import os
-import okonomi
+from kuroko import Bot, watch
 
 basepath = os.path.dirname(os.path.abspath(__file__))
 
-class MyBot(okonomi.Bot):
+class MyBot(Bot):
 
-    @okonomi.watch(basepath, patterns=['*.txt'], recursive=True)
+    @watch(basepath, patterns=['*.txt'], recursive=True)
     def echo_pong(self, event):
         print(event, "change [%s]" % event.src_path)
 

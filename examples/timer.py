@@ -1,9 +1,9 @@
-import okonomi
+from kuroko import Bot, timer
 
 
-class MyBot(okonomi.Bot):
+class MyBot(Bot):
 
-    @okonomi.timer(5)
+    @timer(5)
     def echo_pong(self):
         print("pong")
 

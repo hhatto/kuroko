@@ -9,4 +9,4 @@ pypireg:
 	${PYTHON} setup.py sdist upload
 
 clean:
-	rm -rf *.egg-info build dist
+	rm -rf *.egg-info build dist kuroko/*.pyc

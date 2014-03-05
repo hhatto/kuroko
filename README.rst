@@ -1,4 +1,4 @@
-Okonomi
+Kuroko
 =======
 Minimalistic Python Bot Framework
 
@@ -19,7 +19,7 @@ Installation
 
 ::
 
-    pip install okonomi
+    pip install kuroko
 
 
 Usage
@@ -28,11 +28,11 @@ Usage
 
 .. code-block:: python
 
-    import okonomi
+    import kuroko
 
-    class MyBot(okonomi.Bot):
+    class MyBot(kuroko.Bot):
 
-        @okonomi.timer(5)
+        @kuroko.timer(5)
         def echo_pong(self):
             print("pong")
 
@@ -43,9 +43,9 @@ crontab like task execution
 
 .. code-block:: python
 
-    class MyBot(okonomi.Bot):
+    class MyBot(kuroko.Bot):
 
-        @okonomi.crontab('*/5 * * * *')
+        @kuroko.crontab('*/5 * * * *')
         def echo_pong(self):
             print("pong")
 
@@ -53,24 +53,19 @@ watchdog_ thin wrapper
 
 .. code-block:: python
 
-    class MyBot(okonomi.Bot):
+    class MyBot(kuroko.Bot):
 
-        @okonomi.watch
+        @kuroko.watch
         def echo_pong(self, event):
             print("pong", event)
 
-        @okonomi.watch(patterns=['*.py'])
+        @kuroko.watch(patterns=['*.py'])
         def echo_ping(self, event):
             print("ping", event)
 
 
 .. _watchdog: https://pypi.python.org/pypi/watchdog
 
-
-Okonomi?
-========
-Okonomi is Soul Food in Osaka City!
-Okonomiyaki_ is official name.
-
-.. _Okonomiyaki: http://en.wikipedia.org/wiki/Okonomiyaki
-
+License
+-------
+MIT

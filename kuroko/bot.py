@@ -19,7 +19,7 @@ class _ProxyEventHandler(PatternMatchingEventHandler):
 
 class Bot(object):
 
-    """Okonomi Bot Object"""
+    """Kuroko Bot Object"""
 
     funcs = []
 
@@ -27,7 +27,7 @@ class Bot(object):
         self.daemonize = daemonize  # TODO: not implementation
         self.procs = []
         logging_level = logbook.INFO if not debug else logbook.DEBUG
-        self.log = logbook.Logger('okonomi', logging_level)
+        self.log = logbook.Logger('kuroko', logging_level)
 
     def _register(self, func, options):
         self.log.debug('register func: @%s.%s' % (func.__name__, options['callback'].__name__))
