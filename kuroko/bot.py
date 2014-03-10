@@ -40,11 +40,23 @@ class Bot(object):
             time.sleep(options['interval'])
 
     @classmethod
-    def timer(self, interval=1):
-        def _timer(func):
-            self.funcs.append({'function': 'exe_timer',
-                               'options': {'interval': interval, 'callback': func}})
-        return _timer
+    def timer(self, obj=None, *args, **kwargs):
+        if callable(obj):
+            # not exist arg
+            func = obj
+            def _timer(interval=60):
+                self.funcs.append({'function': 'exe_timer',
+                                   'options': {'interval': interval, 'callback': func}})
+            return _timer()
+        else:
+            # exist arg(s)
+            _args = [obj] + list(args)
+            def _timer(func):
+                def _inner_timer(self, interval=60):
+                    self.funcs.append({'function': 'exe_timer',
+                                       'options': {'interval': interval, 'callback': func}})
+                return _inner_timer(self, *_args, **kwargs)
+            return _timer
 
     def exe_crontab(self, options):
         callback = options['callback']
@@ -80,6 +92,7 @@ class Bot(object):
     @classmethod
     def watch(self, obj=None, *args, **kwargs):
         if callable(obj):
+            # not exist arg
             func = obj
             @functools.wraps(obj)
             def _watch():
@@ -89,6 +102,7 @@ class Bot(object):
                                                'recursive': False, 'case_sensitive': False}})
             return _watch()
         else:
+            # exist arg(s)
             _args = [obj] + list(args)
             def _watch(func):
                 def _inner_watch(self, path='.', patterns=['*'], ignore_patterns=None, ignore_directories=None, recursive=True, case_sensitive=False):
