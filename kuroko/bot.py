@@ -27,10 +27,13 @@ class Bot(object):
         self.daemonize = daemonize  # TODO: not implementation
         self.procs = []
         logging_level = logbook.INFO if not debug else logbook.DEBUG
-        self.log = logbook.Logger('kuroko', logging_level)
+        # Logging Object for Bot Object
+        self._ = logbook.Logger('[kuroko system]', logging_level)
+        # Logging Object for User definition functions
+        self.log = logbook.Logger('[kuroko user]', logging_level)
 
     def _register(self, func, options):
-        self.log.debug('register func: @%s.%s' % (func.__name__, options['callback'].__name__))
+        self._.debug('register func: @%s.%s' % (func.__name__, options['callback'].__name__))
         self.procs.append(Process(target=func, args=(options, )))
 
     def exe_timer(self, options):
@@ -116,7 +119,7 @@ class Bot(object):
             return _watch
 
     def start(self):
-        self.log.debug("start bot...")
+        self._.debug("start bot...")
         for func in self.funcs:
             self._register(getattr(self, func['function']), options=func['options'])
         for proc in self.procs:
@@ -124,7 +127,7 @@ class Bot(object):
         try:
             # TODO: busy loop, now
             while True:
-                self.log.debug("busy loop")
+                self._.debug("busy loop")
                 time.sleep(1)
         except KeyboardInterrupt:
             for proc in self.procs:
