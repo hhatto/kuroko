@@ -1,3 +1,11 @@
-from kuroko.bot import Bot, timer, crontab, watch
+"""Minimalistic Python Task Executor Framework
 
-__version__ = '0.0.1'
+      _/                                      _/
+     _/  _/    _/    _/  _/  _/_/    _/_/    _/  _/      _/_/
+    _/_/      _/    _/  _/_/      _/    _/  _/_/      _/    _/
+   _/  _/    _/    _/  _/        _/    _/  _/  _/    _/    _/
+  _/    _/    _/_/_/  _/          _/_/    _/    _/    _/_/
+"""
+
+from kuroko.bot import Bot, timer, crontab, watch
+from kuroko._version import __version__
