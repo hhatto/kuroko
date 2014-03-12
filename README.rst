@@ -1,6 +1,6 @@
 Kuroko
 =======
-Minimalistic Python Bot Framework
+Minimalistic Python Task Executor Framework
 
 
 Requirements
@@ -24,7 +24,10 @@ Installation
 
 Usage
 =====
+examples
+
 5sec interval task execution
+----------------------------
 
 .. code-block:: python
 
@@ -40,6 +43,7 @@ Usage
     bot.start()
 
 crontab like task execution
+---------------------------
 
 .. code-block:: python
 
@@ -50,6 +54,7 @@ crontab like task execution
             print("pong")
 
 watchdog_ thin wrapper
+----------------------
 
 .. code-block:: python
 
@@ -66,6 +71,25 @@ watchdog_ thin wrapper
 
 .. _watchdog: https://pypi.python.org/pypi/watchdog
 
-License
+logging
 -------
+
+.. code-block:: python
+
+    class MyBot(kuroko.Bot):
+
+        @kuroko.crontab('*/5 * * * *')
+        def echo_pong(self):
+            self.log.info("app logging")
+
+
+TODO
+====
+* colorize logging
+* statistics web frontend
+* terminal like interface
+
+
+License
+=======
 MIT
