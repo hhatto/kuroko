@@ -119,7 +119,7 @@ class Bot(object):
             return _watch
 
     def start(self):
-        self._.debug("start bot...")
+        self._.info("start bot...")
         for func in self.funcs:
             self._register(getattr(self, func['function']), options=func['options'])
         for proc in self.procs:
