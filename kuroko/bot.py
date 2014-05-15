@@ -32,9 +32,14 @@ class Bot(object):
         # Logging Object for User definition functions
         self.log = logbook.Logger('[kuroko user]', logging_level)
 
-    def _register(self, func, options):
+    def _register(self, func, options, index=None):
         self._.debug('register func: @%s.%s' % (func.__name__, options['callback'].__name__))
-        self.procs.append(Process(target=func, args=(options, )))
+        p = Process(target=func, name=options['callback'].__name__, args=(options, ))
+        if index:
+            self.procs.insert(index, p)
+        else:
+            self.procs.append(p)
+        return p
 
     def exe_timer(self, options):
         callback = options['callback']
@@ -64,16 +69,22 @@ class Bot(object):
     def exe_crontab(self, options):
         callback = options['callback']
         entry = CronTab(options['schedule'])
+        # FIXME: change to offset not used implementation
+        # problem of callback function twice time when process died.
+        old_sleep_time = entry.next() 
         while True:
-            time.sleep(entry.next())
-            callback(self)
+            sleep_time = entry.next()
+            if sleep_time > old_sleep_time:
+                callback(self)
+            old_sleep_time = sleep_time
+            time.sleep(1)
 
     @classmethod
     def crontab(self, schedule='* * * * *'):
-        def _timer(func):
+        def _crontab(func):
             self.funcs.append({'function': 'exe_crontab',
                                'options': {'schedule': schedule, 'callback': func}})
-        return _timer
+        return _crontab
 
     def exe_watch(self, options):
         callback = options['callback']
@@ -118,6 +129,21 @@ class Bot(object):
                 return _inner_watch(self, *_args, **kwargs)
             return _watch
 
+    def _check_proc(self, autorestart=True):
+        """alive monitoring"""
+        restart_proc_index = []
+        for cnt, proc in enumerate(self.procs):
+            if not proc.is_alive():
+                self._.warn("'%s' func not alive" % proc.name)
+                if autorestart:
+                    restart_proc_index.append(cnt)
+        restart_proc_index.reverse()
+        for i in restart_proc_index:
+            target_proc = self.procs.pop(i)
+            p = self._register(getattr(self, self.funcs[i]['function']), options=self.funcs[i]['options'], index=i)
+            self._.warn("'%s' func restart" % p.name)
+            p.start()
+
     def start(self):
         self._.info("start bot...")
         for func in self.funcs:
@@ -128,6 +154,7 @@ class Bot(object):
             # TODO: busy loop, now
             while True:
                 self._.debug("busy loop")
+                self._check_proc(self)
                 time.sleep(1)
         except KeyboardInterrupt:
             for proc in self.procs:
