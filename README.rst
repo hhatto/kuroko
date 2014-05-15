@@ -85,7 +85,6 @@ logging
 
 TODO
 ====
-* alive monitoring for user define process
 * colorize logging
 * statistics web frontend
 * terminal like interface
