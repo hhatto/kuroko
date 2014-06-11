@@ -9,6 +9,8 @@ from watchdog.events import PatternMatchingEventHandler
 
 class _ProxyEventHandler(PatternMatchingEventHandler):
 
+    """watchdog event handler"""
+
     def _set_queue(self, queue):
         self.passing_queue = queue
 
@@ -145,6 +147,7 @@ class Bot(object):
             p.start()
 
     def start(self):
+        """Bot start method"""
         self._.info("start bot...")
         for func in self.funcs:
             self._register(getattr(self, func['function']), options=func['options'])
