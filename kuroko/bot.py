@@ -27,20 +27,17 @@ class Bot(object):
 
     def __init__(self, daemonize=False, debug=False):
         self.daemonize = daemonize  # TODO: not implementation
-        self.procs = []
+        self.procs = {}
         logging_level = logbook.INFO if not debug else logbook.DEBUG
         # Logging Object for Bot Object
         self._ = logbook.Logger('[kuroko system]', logging_level)
         # Logging Object for User definition functions
         self.log = logbook.Logger('[kuroko user]', logging_level)
 
-    def _register(self, func, options, index=None):
+    def _register(self, func, options):
         self._.debug('register func: @%s.%s' % (func.__name__, options['callback'].__name__))
         p = Process(target=func, name=options['callback'].__name__, args=(options, ))
-        if index:
-            self.procs.insert(index, p)
-        else:
-            self.procs.append(p)
+        self.procs[options['callback'].__name__] = {'procobj': p, 'function': func, 'options': options}
         return p
 
     def exe_timer(self, options):
@@ -133,16 +130,15 @@ class Bot(object):
 
     def _check_proc(self, autorestart=True):
         """alive monitoring"""
-        restart_proc_index = []
-        for cnt, proc in enumerate(self.procs):
-            if not proc.is_alive():
-                self._.warn("'%s' func not alive" % proc.name)
+        restart_proc_name = []
+        for procname, proc in self.procs.items():
+            if not proc['procobj'].is_alive():
+                self._.warn("'%s' func not alive" % procname)
                 if autorestart:
-                    restart_proc_index.append(cnt)
-        restart_proc_index.reverse()
-        for i in restart_proc_index:
-            target_proc = self.procs.pop(i)
-            p = self._register(getattr(self, self.funcs[i]['function']), options=self.funcs[i]['options'], index=i)
+                    restart_proc_name.append(procname)
+        print(restart_proc_name)
+        for procname in restart_proc_name:
+            p = self._register(getattr(self, self.procs[procname]['function'].__name__), options=self.procs[procname]['options'])
             self._.warn("'%s' func restart" % p.name)
             p.start()
 
@@ -151,8 +147,8 @@ class Bot(object):
         self._.info("start bot...")
         for func in self.funcs:
             self._register(getattr(self, func['function']), options=func['options'])
-        for proc in self.procs:
-            proc.start()
+        for proc in self.procs.values():
+            proc['procobj'].start()
         try:
             # TODO: busy loop, now
             while True:
@@ -160,11 +156,11 @@ class Bot(object):
                 self._check_proc(self)
                 time.sleep(1)
         except KeyboardInterrupt:
-            for proc in self.procs:
-                if proc.is_alive():
-                    proc.terminate()
-            for proc in self.procs:
-                proc.join()
+            for proc in self.procs.values():
+                if proc['procobj'].is_alive():
+                    proc['procobj'].terminate()
+            for proc in self.procs.values():
+                proc['procobj'].join()
             print("Goodby")
 
 
