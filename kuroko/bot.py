@@ -136,7 +136,6 @@ class Bot(object):
                 self._.warn("'%s' func not alive" % procname)
                 if autorestart:
                     restart_proc_name.append(procname)
-        print(restart_proc_name)
         for procname in restart_proc_name:
             p = self._register(getattr(self, self.procs[procname]['function'].__name__), options=self.procs[procname]['options'])
             self._.warn("'%s' func restart" % p.name)
