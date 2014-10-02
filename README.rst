@@ -85,9 +85,10 @@ logging
 
 TODO
 ====
-* colorize logging
-* statistics web frontend
-* terminal like interface
+- [ ] support multi-thread model
+- [ ] colorize logging
+- [ ] statistics web frontend
+- [ ] terminal like interface
 
 
 License
