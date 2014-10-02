@@ -70,7 +70,7 @@ class Bot(object):
         entry = CronTab(options['schedule'])
         # FIXME: change to offset not used implementation
         # problem of callback function twice time when process died.
-        old_sleep_time = entry.next() 
+        old_sleep_time = entry.next()
         while True:
             sleep_time = entry.next()
             if sleep_time > old_sleep_time:
