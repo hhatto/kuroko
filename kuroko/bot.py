@@ -1,3 +1,4 @@
+import signal
 import time
 import functools
 from multiprocessing import Process, Queue
@@ -28,11 +29,16 @@ class Bot(object):
     def __init__(self, daemonize=False, debug=False):
         self.daemonize = daemonize  # TODO: not implementation
         self.procs = {}
+        self.restart_flag = False
         logging_level = logbook.INFO if not debug else logbook.DEBUG
         # Logging Object for Bot Object
         self._ = logbook.Logger('[kuroko system]', logging_level)
         # Logging Object for User definition functions
         self.log = logbook.Logger('[kuroko user]', logging_level)
+        signal.signal(signal.SIGHUP, self._signal_handler)
+
+    def _signal_handler(self):
+        self.restart_flag = True
 
     def _register(self, func, options):
         self._.debug('register func: @%s.%s' % (func.__name__, options['callback'].__name__))
@@ -152,6 +158,10 @@ class Bot(object):
             # TODO: busy loop, now
             while True:
                 self._.debug("busy loop")
+                if self.restart_flag:
+                    for proc in self.procs.values():
+                        if proc['procobj'].is_alive():
+                            proc['procobj'].terminate()
                 self._check_proc(self)
                 time.sleep(1)
         except KeyboardInterrupt:

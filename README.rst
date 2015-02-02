@@ -83,6 +83,11 @@ logging
             self.log.info("app logging")
 
 
+Restart All task
+----------------
+use SIGHUP
+
+
 TODO
 ====
 - [ ] support multi-thread model
