@@ -83,9 +83,10 @@ logging
             self.log.info("app logging")
 
 
-Restart All task
-----------------
-use SIGHUP
+Restart & Stop task
+-------------------
+send a SIGUSR1 when you want to restart the all tasks,
+send a SIGHUP when you want to stop the all tasks.
 
 
 TODO

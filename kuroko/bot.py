@@ -30,15 +30,22 @@ class Bot(object):
         self.daemonize = daemonize  # TODO: not implementation
         self.procs = {}
         self.restart_flag = False
+        self.terminate_flag = False
         logging_level = logbook.INFO if not debug else logbook.DEBUG
         # Logging Object for Bot Object
         self._ = logbook.Logger('[kuroko system]', logging_level)
         # Logging Object for User definition functions
         self.log = logbook.Logger('[kuroko user]', logging_level)
-        signal.signal(signal.SIGHUP, self._signal_handler)
+        signal.signal(signal.SIGUSR1, self._reload_signal_handler)
+        signal.signal(signal.SIGHUP, self._stop_signal_handler)
 
-    def _signal_handler(self):
+    def _reload_signal_handler(self, signum, frame):
+        self._.debug("realod all task")
         self.restart_flag = True
+
+    def _stop_signal_handler(self, signum, frame):
+        self._.debug("stop all task")
+        self.terminate_flag = True
 
     def _register(self, func, options):
         self._.debug('register func: @%s.%s' % (func.__name__, options['callback'].__name__))
@@ -158,11 +165,18 @@ class Bot(object):
             # TODO: busy loop, now
             while True:
                 self._.debug("busy loop")
-                if self.restart_flag:
+                if self.restart_flag or self.terminate_flag:
                     for proc in self.procs.values():
+                        print("start", proc['procobj'], proc['procobj'].is_alive())
                         if proc['procobj'].is_alive():
+                            self._.debug("terminate")
                             proc['procobj'].terminate()
-                self._check_proc(self)
+                        print("end", proc['procobj'], proc['procobj'].is_alive())
+                if self.restart_flag:
+                    self._check_proc(self)
+                    self.restart_flag = False
+                if self.terminate_flag:
+                    break
                 time.sleep(1)
         except KeyboardInterrupt:
             for proc in self.procs.values():
