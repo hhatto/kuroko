@@ -1,5 +1,8 @@
 Kuroko
 =======
+.. image:: https://travis-ci.org/hhatto/kuroko.svg?branch=master
+    :target: https://travis-ci.org/hhatto/kuroko
+
 Minimalistic Python Task Executor Framework
 
 
